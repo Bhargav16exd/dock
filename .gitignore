@@ -1,0 +1,8 @@
+build/bin
+node_modules
+frontend/dist
+config/private_key.pem
+config/public_key.pem
+config/setup.json
+config/token.json
+/backups
