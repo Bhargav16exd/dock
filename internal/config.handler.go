@@ -7,17 +7,18 @@ import (
 )
 
 type ConfigType struct {
-	ProductId           string `json:"product_id"`
-	DockLicenseKeyOne   string `json:"dock_license_key_one"`
-	DockLicenseKeyTwo   string `json:"dock_license_key_two"`
-	IsDockActive        bool   `json:"is_dock_active"`
-	ServerHost          string `json:"server_host"`
-	ApiActivationPath   string `json:"api_activation_path"`
-	ApiFileCheckPath    string `json:"api_file_check_path"`
-	ApiDownloadFilePath string `json:"api_download_file_path"`
-	ApiDeleteFilePath   string `json:"api_delete_file_path"`
-	MacId               string `json:"mac_id"`
-	Environment         string `json:"environment"`
+	ProductId             string `json:"product_id"`
+	DockLicenseKeyOne     string `json:"dock_license_key_one"`
+	DockLicenseKeyTwo     string `json:"dock_license_key_two"`
+	IsDockActive          bool   `json:"is_dock_active"`
+	ServerHost            string `json:"server_host"`
+	ApiActivationPath     string `json:"api_activation_path"`
+	ApiFileCheckPath      string `json:"api_file_check_path"`
+	ApiDownloadFilePath   string `json:"api_download_file_path"`
+	ApiDeleteFilePath     string `json:"api_delete_file_path"`
+	ApiIsDeviceActivePath string `json:"api_is_device_active_path"`
+	MacId                 string `json:"mac_id"`
+	Environment           string `json:"environment"`
 }
 
 func GetConfig() ConfigType {

@@ -4,6 +4,7 @@ import BootingScreen from "./components/BootingScreen"
 import CheckingNetworkScreen from "./components/CheckingNetworkScreen"
 import ConnectingControlPlaneScreen from "./components/ConnectingControlPlaneScreen"
 import Dashboard from "./components/Dashboard"
+import ActivateDeviceQr from "./components/ActivateDeviceQr"
 
 export enum DeviceState {
   BOOTING = "BOOTING",
@@ -30,6 +31,8 @@ export default function App() {
   const wailsReady = useWailsReady()
   const [state, setState] = useState<DeviceState>(DeviceState.BOOTING)
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+  const [activateDeviceQrPayload, setActivateDeviceQrPayload] = useState<string | null>(null)
+  const [qrResetSignal, setQrResetSignal] = useState(0)
 
   useEffect(() => {
     if (!wailsReady) return   // ← wait for runtime to be injected
@@ -45,12 +48,18 @@ export default function App() {
         setDashboardData(payload)
       })
 
+      const unsubActivateDeviceQr = EventsOn("QR_PAIRING:QR", (payload: string) => {
+        setActivateDeviceQrPayload(payload)
+        setQrResetSignal((n) => n + 1)
+      })
+
       // Signal Go that frontend is ready
       EventsEmit("frontend:ready")
 
       return () => {
         unsubStatus()
         unsubDashboard()
+        unsubActivateDeviceQr()
       }
     }
 
@@ -62,12 +71,12 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen">
-      {renderScreen(state, dashboardData)}
+      {renderScreen(state, dashboardData, activateDeviceQrPayload, qrResetSignal)}
     </div>
   )
 }
 
-function renderScreen(state: DeviceState, dashboardData: DashboardData | null) {
+function renderScreen(state: DeviceState, dashboardData: DashboardData | null, activateDeviceQrPayload: string | null, qrResetSignal: number,) {
   switch (state) {
     case DeviceState.BOOTING:
       return <BootingScreen />
@@ -75,9 +84,11 @@ function renderScreen(state: DeviceState, dashboardData: DashboardData | null) {
       return <CheckingNetworkScreen />
     case DeviceState.CONNECTING_CONTROL_PLANE:
       return <ConnectingControlPlaneScreen />
+    case DeviceState.QR_PAIRING:
+      return <ActivateDeviceQr data={activateDeviceQrPayload} resetSignal={qrResetSignal}/>
     case DeviceState.DASHBOARD:
       return <Dashboard data={dashboardData} />
     default:
-      return <Dashboard data={dashboardData} />
+      return <ActivateDeviceQr data={activateDeviceQrPayload} resetSignal={qrResetSignal}/>
   }
 }

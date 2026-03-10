@@ -66,9 +66,14 @@ func (a *App) startApp() {
 	configs := internal.GetConfig()
 
 	if !configs.IsDockActive {
-		a.emit("status", "QR_PAIRING")
-		internal.ActivateDock()
+		response := internal.ActivateDock()
 		internal.GenerateCryptoKeys()
+
+		// Poll until activated, emitting license key each time it's not yet active
+		a.emit("status", "QR_PAIRING")
+		internal.CheckIsDeviceActivated(configs, func() {
+			a.emit("QR_PAIRING:QR", response.Data.DeviceLicenceKeyOne)
+		})
 	}
 
 	a.emit("status", "Ready")

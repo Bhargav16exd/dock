@@ -1,6 +1,5 @@
 
 function Dashboard({data}:any){
-
     if (!data) {
         return (
         <div className="h-screen w-screen flex items-center justify-center bg-[#0A0A0A]">
